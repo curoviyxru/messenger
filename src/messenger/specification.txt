@@ -1,0 +1,74 @@
+Protocol version: 3.
+Every packet starts with packet's id. - byte.
+Suggestions for backend: broadcast users names that join and leave server, migrate streams to User class, show messages history, store data in DB, user passwords, server password, data encryption.
+Suggestions for frontend: show in title status (nickname, id, ip) and do action by Enter pressing, log popupmenu with copy/paste/cut/clear.
+
+Packets' types:
+-2 - disconnect packet
+-1 - unknown packet error
+0 - handshake hello
+1 - UID request
+2 - send message
+
+-----
+
+Disconnect packet: (id -2)
+client -> server:
+id = -2 - byte; //ID of a packet
+
+server -> client:
+???
+
+-----
+
+Unknown packet error packet: (id -1)
+
+client -> server:
+???
+
+server -> client:
+id = -1 - byte; //ID of a packet
+upid    - byte; //ID of an unknown packet;
+version - byte; //Server's protocol version
+
+-----
+
+Handshake hello packet: (id 0)
+
+client -> server:
+id = 0  - byte; //ID of a packet
+version - byte; //Client's protocol version
+
+server -> client:
+id = 0  - byte; //ID of a packet
+version - byte; //Server's protocol version
+
+-----
+
+UID request packet: (id 1)
+
+client -> server:
+id = 1   - byte;       //ID of a packet
+nickname - UTF string; //Needed username
+
+server -> client:
+id = 1  - byte; //ID of a packet
+uid     - long; //Given unique UID: if errored is lower than 0; (see: UID errors types)
+
+UID errors types:
+-1 - unknown error;
+-2 - incorrect nickname;
+-3 - nickname is taken;
+
+-----
+
+Send message packet: (id 2)
+
+client -> server:
+id = 2  - byte;       //ID of a packet
+message - UTF string; //Sent message
+
+server -> client:
+id = 2   - byte;       //ID of a packet
+nickname - UTF string; //Sender's nickname
+message  - UTF string; //Sent message
