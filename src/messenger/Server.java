@@ -29,6 +29,7 @@ public class Server {
         serverSocket = new ServerSocket(8989);
         
         info("Server has started.");
+        info("Server address: " + serverSocket.getInetAddress().getCanonicalHostName() + ":" + serverSocket.getLocalPort());
         
         while (serverSocket != null && !serverSocket.isClosed()) {
             Socket socket = serverSocket.accept();
