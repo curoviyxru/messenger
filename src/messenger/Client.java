@@ -37,11 +37,7 @@ public class Client {
                 try {
                     initConnection(nickname);
                 } catch (Exception e) {
-                    try {
-                        closeConnection(e);
-                    } catch (Exception ex) {
-                        disconnect(ex);
-                    }
+                    disconnect(e);
                 }
             }
         };
@@ -50,10 +46,9 @@ public class Client {
     
     public void closeConnection(Exception ex) throws Exception {
         if (user == null) throw new NullPointerException("User is null. You should connect first.");
-        
+
         sendDisconnect(out);
         closedConnection(ex);
-        disconnect(ex);
     }
     
     public void closeConnection() throws Exception {
@@ -61,19 +56,17 @@ public class Client {
     }
     
     public void disconnect(Exception ex) {
-        //if (user == null) throw new NullPointerException("User is null. You should connect first.");
-        
         try {
             if (!user.socket.isClosed()) user.socket.close();
             info("Disconnecting from " + user.socket.getInetAddress().getHostAddress());
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         user = null;
         in = null;
         out = null;
         
         disconnected(ex);
     }
-    
+
     public void disconnect() {
         disconnect(null);
     }
@@ -146,7 +139,7 @@ public class Client {
         String nickname = in.readUTF();
         String message = in.readUTF();
         
-        if (nickname != null && message != null) gotNewMessage(nickname, message);
+        gotNewMessage(nickname, message);
     }
 
     public void gotNewMessage(String nickname, String message) {

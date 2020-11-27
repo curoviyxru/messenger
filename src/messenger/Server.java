@@ -37,13 +37,13 @@ public class Server {
         }
     }
     
-    public void stop() throws Exception {
+    public void stop() {
         for (User u : users) {
             deleteSocket(u, null);
         }
         try {
             if (!serverSocket.isClosed()) serverSocket.close();
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         serverSocket = null;
         nextUID = 0;
         users.clear();
@@ -77,7 +77,7 @@ public class Server {
         try {
             if (!user.socket.isClosed()) user.socket.close();
             info("Deleting user: " + user.socket.getInetAddress().getHostAddress() + " / " + user.uid + " / " + user.nickname);
-        } catch (Exception ex) {}
+        } catch (Exception ignored) {}
         users.remove(user);
         
         disconnected(user, e);
@@ -108,7 +108,7 @@ public class Server {
             case DISCONNECT_PACKET:
                 throw new IOException("User disconnected: " + user.socket.getInetAddress().getHostAddress() + " / " + user.uid + " / " + user.nickname);
             case SEND_MESSAGE_PACKET:
-                processSendMessage(user, in, out);
+                processSendMessage(user, in);
                 break;
             default:
                 processUnknownPacket(id, out);
@@ -142,7 +142,7 @@ public class Server {
         String nickname = in.readUTF();
         long uid;
         
-        if (nickname == null || nickname.trim().isEmpty()) uid = -2;
+        if (nickname.trim().isEmpty()) uid = -2;
         else if (getByNickname(nickname) != null) uid = -3;
         else uid = nextUID();
         
@@ -175,11 +175,11 @@ public class Server {
         out.writeLong(uid);
     }
 
-    private void processSendMessage(User user, DataInputStream in, DataOutputStream out) throws Exception {
+    private void processSendMessage(User user, DataInputStream in) throws Exception {
         if (user.uid < 0 || user.nickname == null) throw new IOException("User is not authorized.");
         
         String message = in.readUTF();
-        if (message == null || message.trim().isEmpty()) return;
+        if (message.trim().isEmpty()) return;
         gotNewMessage(user, message);
         sendSendMessages(user, message);
     }

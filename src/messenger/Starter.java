@@ -33,7 +33,7 @@ public class Starter {
     }
 
     private static void showInformation() {
-        System.out.println("simpleMessenger by curoviyxru, 2020.");
+        System.out.println("simpleMessenger, 2020.");
         System.out.println("Client protocol version: " + Client.PROTOCOL_VERSION + ", server: " + Server.PROTOCOL_VERSION);
         System.out.println();
         System.out.println("Usage: messenger <mode>");
@@ -52,7 +52,7 @@ public class Starter {
         System.out.print("Nickname: ");
         String nickname = scanner.nextLine();
         client.authorize(nickname);
-        
+
         String line;
         while (!(line = scanner.nextLine()).trim().isEmpty()) {
             client.sendMessage(line);
